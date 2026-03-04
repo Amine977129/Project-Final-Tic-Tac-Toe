@@ -1,30 +1,16 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Tic Tac Toe</title>
+    <title>Tic Tac Toe 5x5</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <h1>Tic Tac Toe</h1>
-
-    <div class="game-board">
-        <div class="cell" id="item1" onclick="game(this.id)"></div>
-        <div class="cell"id="item2" onclick="game(this.id)"></div>
-        <div class="cell"id="item3" onclick="game(this.id)"></div>
-        <div class="cell"id="item4" onclick="game(this.id)"></div>
-        <div class="cell"id="item5" onclick="game(this.id)"></div>
-        <div class="cell"id="item6"onclick="game(this.id)"></div>
-        <div class="cell"id="item7"onclick="game(this.id)"></div>
-        <div class="cell"id="item8"onclick="game(this.id)"></div>
-        <div class="cell"id="item9"onclick="game(this.id)"></div>
-    </div>
-
-    <p id="status">Torn del jugador X</p>
-
-    <button id="reset">Reiniciar partida</button>
+    <h1>Tic Tac Toe 5x5</h1>
+    <div id="board" class="game-board"></div>
+    <p id="statu">Turno del jugador X (clic)</p>
 
     <script src="script.js"></script>
 </body>
 </html>
+

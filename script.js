@@ -1,66 +1,118 @@
-let title = document.querySelector('#status')
-let turn = 'x';
-let squares = [];
+const boardSize = 5;
+let turn = "X";
+let squares = Array(boardSize * boardSize).fill(""); 
+let board = document.getElementById("board");
+let statu = document.getElementById("statu");
+let selectedCell = null; // pour joueur O
 
-function end(num1, num2, num3) {
-
-    title.innerHTML = `The winner is ${squares[num1]}`;
-
-    document.getElementById('item' + num1).style.background = '#00ff00';
-    document.getElementById('item' + num2).style.background = '#00ff00';
-    document.getElementById('item' + num3).style.background = '#00ff00';
-
-    setTimeout(function () {
-        location.reload();
-    }, 3000);
+// Création du plateau
+for (let i = 0; i < boardSize * boardSize; i++) {
+    let cell = document.createElement("div");
+    cell.classList.add("cell");
+    cell.dataset.index = i;
+    cell.id = "item" + i; // pour la fonction end()
+    cell.addEventListener("click", () => play(cell));
+    board.appendChild(cell);
 }
+board.style.gridTemplateColumns = `repeat(${boardSize}, 60px)`;
 
-function winner() {
+// Joueur clique
+function play(cell) {
+    let i = cell.dataset.index;
 
-    for (let i = 1; i <= 9; i++) {
-        squares[i] = document.getElementById('item' + i).innerHTML;
-    }
+    if (squares[i] !== "") return;
 
-    if (squares[1] == squares[2] && squares[2] == squares[3] && squares[1] != '') {
-        end(1, 2, 3);
-    }
-    else if (squares[4] == squares[5] && squares[5] == squares[6] && squares[4] != '') {
-        end(4, 5, 6);
-    }
-    else if (squares[7] == squares[8] && squares[8] == squares[9] && squares[7] != '') {
-        end(7, 8, 9);
-    }
-    else if (squares[1] == squares[4] && squares[4] == squares[7] && squares[1] != '') {
-        end(1, 4, 7);
-    }
-    else if (squares[2] == squares[5] && squares[5] == squares[8] && squares[2] != '') {
-        end(2, 5, 8);
-    }
-    else if (squares[3] == squares[6] && squares[6] == squares[9] && squares[3] != '') {
-        end(3, 6, 9);
-    }
-    else if (squares[1] == squares[5] && squares[5] == squares[9] && squares[1] != '') {
-        end(1, 5, 9);
-    }
-    else if (squares[3] == squares[5] && squares[5] == squares[7] && squares[3] != '') {
-        end(3, 5, 7);
+    if (turn === "X") {
+        squares[i] = "X";
+        cell.textContent = "X";
+
+        if (checkWinner()) return;
+        
+        turn = "O";
+        statu.textContent = "Turno del jugador O (clic y luego tecla O)";
+    } else if (turn === "O") {
+        selectedCell = cell;
     }
 }
 
-function game(id) {
+// Joueur O appuie sur touche "O"
+document.addEventListener("keydown", function(e) {
+    if (turn === "O" && e.key.toLowerCase() === "o" && selectedCell !== null) {
+        let i = selectedCell.dataset.index;
 
-    let element = document.getElementById(id)
+        if (squares[i] === "") {
+            squares[i] = "O";
+            selectedCell.textContent = "O";
 
-    if (turn === 'x' && element.innerHTML == '') {
-        element.innerHTML = 'X';
-        turn = 'o';
-        title.innerHTML = 'Turno jugador O';
+            if (checkWinner()) return;
+
+            turn = "X";
+            statu.textContent = "Turno del jugador X";
+            selectedCell = null;
+        }
     }
-    else if (turn === 'o' && element.innerHTML == '') {
-        element.innerHTML = 'O';
-        turn = 'x';
-        title.innerHTML = 'Turno jugador X';
+});
+
+// Fonction pour surligner les cases gagnantes
+function end(num1, num2, num3, num4, num5, winner) {
+    statu.textContent = `the winner is : ${winner}!`;
+
+    document.getElementById("item" + num1).style.background = "#00ff00";
+    document.getElementById("item" + num2).style.background = "#00ff00";
+    document.getElementById("item" + num3).style.background = "#00ff00";
+    document.getElementById("item" + num4).style.background = "#00ff00";
+    document.getElementById("item" + num5).style.background = "#00ff00";
+
+    setTimeout(() => location.reload(), 3000);
+}
+
+// Vérification du gagnant
+function checkWinner() {
+    // Lignes
+    for (let r = 0; r < boardSize; r++) {
+        let start = r * boardSize;
+        if (squares[start] !== "" &&
+            squares[start] === squares[start+1] &&
+            squares[start] === squares[start+2] &&
+            squares[start] === squares[start+3] &&
+            squares[start] === squares[start+4]) {
+            end(start, start+1, start+2, start+3, start+4, squares[start]); 
+            return true;
+        }
     }
 
-    winner();
+    // Colonnes
+    for (let c = 0; c < boardSize; c++) {
+        if (squares[c] !== "" &&
+            squares[c] === squares[c+5] &&
+            squares[c] === squares[c+10] &&
+            squares[c] === squares[c+15] &&
+            squares[c] === squares[c+20]) {
+             end(c, c+5, c+10, c+15, c+20, squares[c]);
+            return true;
+        }
+    }
+
+    // Diagonale principale
+    if (squares[0] !== "" &&
+        squares[0] === squares[6] &&
+        squares[0] === squares[12] &&
+        squares[0] === squares[18] &&
+        squares[0] === squares[24]) {
+                    end(0, 6, 12, 18, 24, squares[0]);
+
+        return true;
+    }
+
+    // Diagonale inverse
+    if (squares[4] !== "" &&
+        squares[4] === squares[8] &&
+        squares[4] === squares[12] &&
+        squares[4] === squares[16] &&
+        squares[4] === squares[20]) {
+      end(4, 8, 12, 16, 20, squares[4]);
+        return true;
+    }
+
+    return false;
 }
